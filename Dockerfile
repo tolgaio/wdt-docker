@@ -56,6 +56,7 @@ FROM BASE AS DEPS
 # Folly requires fmt, which *must* be built from source--libfmt-dev doesn't work
 RUN git clone https://github.com/fmtlib/fmt.git && \
     cd fmt && \
+    git checkout dc22360c34884a2ea52e1ed27888ddc9fb13c307 && \
     mkdir _build && cd _build && \
     cmake .. \
       -DCMAKE_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/ \
@@ -68,6 +69,7 @@ RUN git clone https://github.com/fmtlib/fmt.git && \
 # Build folly itself from source
 RUN git clone https://github.com/facebook/folly.git && \
     cd folly && \
+    git checkout 84183bd6c763dd225a40f4dbfbb88019c4cb79e9 && \
     mkdir _build && \
     cd _build && \
     cmake .. && \
@@ -77,8 +79,12 @@ RUN git clone https://github.com/facebook/folly.git && \
 
 FROM DEPS AS RELEASE
 
-RUN git clone https://github.com/facebook/wdt.git
+RUN git clone https://github.com/facebook/wdt.git && \
+    cd wdt && \
+    git checkout 1e247c266298db26fd1b4659f671761e5fd75e80
+
 COPY ./CMakeLists.txt /wdt/
+
 RUN cd wdt && \
     mkdir _build && cd _build && \
     cmake .. -DBUILD_TESTING=off && \
